@@ -1,0 +1,49 @@
+version: 1
+datasets:
+  ecco_darwin_v5_co2_flux:
+    provider: mitgcm_mds
+    protocol: https_mds
+    description: ECCO-Darwin v5 monthly air-sea CO2 flux.
+    endpoint: https://data.nas.nasa.gov/ecco/llc_270/ecco_darwin_v5/output/monthly/CO2_flux/
+    collection: https://data.nas.nasa.gov/ecco/llc_270/grid/
+    variable: co2_flux
+    reference_datetime: "1992-01-01T00:00:00+00:00"
+    dt_seconds: 1200
+    unit_scale: 31557.6
+    output_units: mol C m-2 yr-1
+    available_start: "1992-01-01"
+    available_end: "2011-12-31"
+  merra2_m2tmnxocn_sst:
+    provider: earthdata_cmr
+    protocol: earthdata_cmr
+    description: NASA MERRA-2 monthly ocean skin temperature.
+    collection: M2TMNXOCN
+    variable: TSKINWTR
+    longitude_name: lon
+    latitude_name: lat
+    time_name: time
+    unit_offset: -273.15
+    output_units: degC
+    available_start: "1980-01-01"
+  planetary_computer_example:
+    provider: azure_stac
+    protocol: stac_cog
+    description: Replace collection and asset_key with a geographic Planetary Computer asset.
+    endpoint: https://planetarycomputer.microsoft.com/api/stac/v1
+    collection: replace-me
+    asset_key: replace-me
+    chunks: auto
+  gcs_zarr_example:
+    provider: gcp_gcs
+    protocol: zarr
+    description: Replace endpoint and variable with a cloud-native public or private GCS Zarr store.
+    endpoint: gs://replace-me/dataset.zarr
+    variable: replace_me
+    chunks: auto
+  earth_engine_example:
+    provider: google_earth_engine
+    protocol: earth_engine
+    description: Replace collection and variable with an Earth Engine image collection and band.
+    collection: replace-me
+    variable: replace_me
+    ee_scale: 10000

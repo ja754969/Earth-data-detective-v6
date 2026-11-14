@@ -1,0 +1,5 @@
+[server]
+# Bind only to the local IPv4 loopback interface. Remote access should use
+# authenticated SSH or VS Code port forwarding instead of exposing Streamlit.
+address = "127.0.0.1"
+headless = true
