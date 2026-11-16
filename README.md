@@ -330,6 +330,43 @@ object and is not retried.
 15. Resource safeguards prevent accidental workstation overload. Local discovery is bounded to 80 files, xarray opens datasets lazily with automatic chunks, and plotting rejects spatial fields larger than five million grid cells before converting them to NumPy arrays. The in-memory NetCDF export is refused when its estimated uncompressed size exceeds 512 MiB. These limits produce an explicit message rather than silently dropping data or allowing an uncontrolled allocation.
 16. CMIP6 files with time, pressure, ensemble, and other non-spatial dimensions are reduced only after the requested period and level are selected. The final map contract is a two-dimensional spatial field. One-dimensional regular grids are transposed to `(lat, lon)` before rendering; two-dimensional curvilinear longitude/latitude coordinates are passed directly to Cartopy and are never sent to one-dimensional index helpers.
 17. For an ensemble or multi-model mean, the annotation reports the participating model count. For absolute fields and anomalies, the map overlays `...` stippling where the selected fraction of valid models agrees with the MMM sign and `///` hatching elsewhere. The agreement threshold is selectable from 80% to 99%. Trend maps retain their selectable Student's t or Mann-Kendall confidence level.
+
+### Seasonal linear-trend interpretation
+
+For a **Year** or **Decade** trend, the application first creates one spatial
+field per analysis year and then fits an independent ordinary least-squares
+line at every grid cell. A seasonal field is the arithmetic mean of the time
+samples selected for that season at that grid cell.
+
+The **Season start month** defines the seasonal-year label. For the customary
+DJF ordering `December, January, February`, with December selected as the
+start month, `DJF 1998` means December 1998 plus January and February 1999.
+Consequently, a requested 1998–2018 DJF trend requires data through February
+2019. Selecting a different start month changes this attribution; for example,
+an ordering beginning in January treats January, February, and December as
+months of the same calendar-year label.
+
+For monthly input, a complete DJF seasonal value is the mean of its three
+monthly values. For daily or sub-monthly input, it is the mean of every
+selected time sample in the season; it is not an equal-weight mean of three
+separately calculated monthly means. This distinction matters when sampling
+frequency differs among months.
+
+The application does not require every selected month to be present before it
+forms a seasonal mean. A season containing only available samples can therefore
+contribute a partial-season value, especially at the beginning or end of a
+dataset. Users should verify coverage through the month following the final
+seasonal-year label and exclude incomplete seasons when scientifically
+appropriate.
+
+Missing values are handled independently at each grid cell. Each regression
+uses that cell's finite seasonal values, so the number of fitted years can vary
+spatially. Year and Decade trends require at least two valid analysis years;
+Month and Day trends instead regress the selected individual observations and
+require at least three time samples. When detrending is enabled, it is applied
+to the complete selected source time series before seasonal aggregation and
+trend estimation. Unit conversion is applied after the analysis result is
+calculated.
 18. The **Longitude range**, **Latitude range**, and additional highlighted-range controls use independent numeric inputs with decimal precision. This permits values such as `121.25` without dragging a coarse slider and preserves dateline-wrapping selections.
 
 ## CMIP6 troubleshooting
